@@ -640,9 +640,12 @@ public class AirMapView extends MapView implements GoogleMap.InfoWindowAdapter,
         @Override
         public void run() {
 
-            LatLngBounds bounds = map.getProjection().getVisibleRegion().latLngBounds;
-            if (lastBoundsEmitted == null ||
-                    LatLngBoundsUtils.BoundsAreDifferent(bounds, lastBoundsEmitted)) {
+            Projection projection = (map != null) ? map.getProjection() : null;
+            VisibleRegion region = (projection != null) ? projection.getVisibleRegion() : null;
+            LatLngBounds bounds = (region != null) ? region.latLngBounds : null;
+
+            if ((bounds != null) &&
+                (lastBoundsEmitted == null || LatLngBoundsUtils.BoundsAreDifferent(bounds, lastBoundsEmitted))) {
                 LatLng center = map.getCameraPosition().target;
                 lastBoundsEmitted = bounds;
                 eventDispatcher.dispatchEvent(new RegionChangeEvent(getId(), bounds, center, true));
